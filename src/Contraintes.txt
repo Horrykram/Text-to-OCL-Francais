@@ -1,0 +1,126 @@
+Bouton Contrainte:
+-----------------------------------------------------
+Fr: le client doit �tre majeur
+OCL:
+Context   Client
+     inv :  �ge >= 18
+
+Fr: le solde du client est nul
+OCL: 
+Context   Client
+     inv : solde =0
+
+Context   Client
+     inv : solde.oclIsTypeOf ( int )
+
+
+Fr: l'age du client sup�rieur ou égale à 18 ans
+OCL:
+Context   Client
+     inv : age >= 18
+
+Context   Client
+     inv : age.oclIsTypeOf (int)
+
+Fr: le nom du client doit �tre Mohamed
+OCL:
+Context   Client
+     inv : nom = "Mohamed"
+
+Context   Client
+     inv : nom.oclIsTypeOf ( String ) 
+
+
+
+Fr: le solde du client différent de nul
+OCL:
+Context   Client
+     inv : solde <> 0
+
+Context   Client
+     inv : solde.oclIsTypeOf ( int )
+
+
+Fr: l'adresse de la banque est (Bir-El-Djir-Oran)
+OCL:
+Context   Banque
+     inv : adresse = "Bir-el-djir-oran"
+
+Context   Banque
+     inv : adresse.oclIsTypeOf ( String ) 
+
+
+Fr: le solde du client ne doit pas �tre nul
+OCL:
+Context   Client
+     inv : solde != 0
+
+Context   Client
+     inv : solde.oclIsTypeOf ( int )
+
+
+Fr: l'age du client doit être inférieur à cent ans
+OCL: 
+Context   Client
+   inv : age <=100
+
+Context   Client
+     inv : age.oclIsTypeOf ( int )
+
+
+Fr: le client est mari�
+
+OCL: Context   Client
+   inv : marier = "True"
+
+ Context   Client
+   inv : marier.oclIsTypeOf( boolean )
+
+Fr: le client n'est pas mariée
+
+OCL :
+Context   Client
+   inv : marier = "False"
+
+ Context   Client
+   inv : marier.oclIsTypeOf( boolean )
+
+
+Bouton Contexte:
+-----------------------------------------------------
+
+Context Client
+   inv : 
+Context Compte
+   inv : 
+Context Banque
+   inv : 
+
+
+Bouton Contexte:
+-----------------------------------------------------
+Context  Client
+   inv : nom.oclIsTypeOf(String)
+
+Context  Client
+   inv : age >= 0  and  age <= 2147483647
+   inv : age.oclIsTypeOf( int ) 
+
+Context  Client
+   inv : solde >= 0  and  solde <= 2147483647
+   inv : solde.oclIsTypeOf( int ) 
+
+Context  Client
+   inv : marier = "True"   or  marier = "False"
+   inv : marier.oclIsTypeOf( boolean ) 
+
+Context  Compte
+   inv : type.oclIsTypeOf(String)
+
+Context  Banque
+   inv : nom.oclIsTypeOf(String)
+
+Context  Banque
+   inv : adresse.oclIsTypeOf(String)
+
+
