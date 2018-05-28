@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from xml.dom import minidom
 from os import environ
-from GUI import Ui_MainWindow
+from nlp.GUI import Ui_MainWindow
 from treetaggerwrapper import TreeTagger
 
 excep = ["integer", "string", "boolean","real","classe"]
@@ -16,10 +16,17 @@ real = "http://argouml.org/profiles/uml14/default-uml14.xmi#-84-17--56-5-43645a8
 string = "http://argouml.org/profiles/uml14/default-uml14.xmi#-84-17--56-5-43645a83:11466542d86:-8000:000000000000087E"
 boolean = "http://argouml.org/profiles/uml14/default-uml14.xmi#-84-17--56-5-43645a83:11466542d86:-8000:0000000000000880"
 
-def span(text,color="#cc7832"):
-    return "<br/><span style=\"color: "+color+" ;font-weight: bold;white-space:pre;\">"+text+"</span>"
-def colored(text,color="#cc7832"):
-    return "<span style=\"color: "+color+";white-space:pre;\">"+text+"</span>"
+#colors
+inv_color = "#cc7832"
+context_color = "#cc7832"
+type_color = "#0080ff"
+val_color = "#164412"
+num_color = ""
+class_color = "#a05050"
+
+def colored(text,color="#cc7832",style=""):
+    return "<span style=\"color: {};white-space:pre;{}\">{}</span>".format(color,style, text)
+
 def getTagInfo(text):
         result = []
         for tag in tagger.tag_text(text):
@@ -50,12 +57,13 @@ def getTagPost(text):
         return result
 
 def getEqual(text,dictionnaire):
-    result = ""
+    result = " "
     for key in dictionnaire:
         for word in text.split(" "):
             if word in dictionnaire[key]:
                 result += key
     return result.replace("<","&lt;")
+
 
 def getContrainte(path):
     xmldoc = minidom.parse(path)
@@ -66,25 +74,25 @@ def getContrainte(path):
                     for i in a.getElementsByTagName("UML:Enumeration"):
                         if i.getAttribute('href')==boolean:
                             type = "boolean"
-                            resultat.append(span("Context  : ")+colored(element.getAttribute('name'),"#a05050")+ span("       inv : ") + a.getAttribute('name') + ' = '+colored("\"True\"","#164412") + "  or  " + a.getAttribute('name') + ' = '+colored("\"False\"","#164412") +'<br/>'+span("       inv : ") +  a.getAttribute('name') + ".oclIsTypeOf( "+colored(type,"#0080ff")+" ) <br/>")
+                            resultat.append("<br/>"+colored("Context  : ",context_color,"font-weight: bold;")+colored(element.getAttribute('name'), class_color)+ colored("       inv : ",inv_color,"font-weight: bold;") + a.getAttribute('name') + ' = '+colored("\"True\"",val_color) + "  or  " + a.getAttribute('name') + ' = '+colored("\"False\"",val_color) +'<br/>'+colored("       inv : ",inv_color,"font-weight: bold;") +  a.getAttribute('name') + ".oclIsTypeOf( "+colored(type,type_color)+" ) <br/>")
 
                     for i in a.getElementsByTagName("UML:DataType"):
                         if i.getAttribute('href') == integer:
                             type = "int"
-                            resultat.append(span("Context  : ")+colored(element.getAttribute('name'),"#a05050")+ span("       inv : ") + a.getAttribute('name') + " >= 0" + " and "  + a.getAttribute('name') + " <= 2147483647" "<br/>"+span("       inv : ")+ a.getAttribute('name') + ".oclIsTypeOf("+ colored(type,"#0080ff") + ") <br/>")
+                            resultat.append(colored("Context  : ",context_color,"font-weight: bold;")+colored(element.getAttribute('name'),class_color)+ "<br/>"+colored("       inv : ",inv_color,"font-weight: bold;") + a.getAttribute('name') + " >= 0" + " and "  + a.getAttribute('name') + " <= 2147483647" "<br/>"+colored("       inv : ",inv_color,"font-weight: bold;")+ a.getAttribute('name') + ".oclIsTypeOf("+ colored(type,type_color) + ") <br/>")
 
                         elif i.getAttribute('href') == real:
                             type = "real"
-                            resultat.append(span("Context  : ")+colored(element.getAttribute('name'),"#a05050")+ span("       inv : ") +a.getAttribute('name') + " >= 0" + " and " + a.getAttribute('name') + " <= 2147483647" "<br/>"+ span("       inv : ")+ a.getAttribute('name') + ".oclIsTypeOf("+colored(type,"#0080ff")+") <br/>")
+                            resultat.append("<br/>"+colored("Context  : ",context_color,"font-weight: bold;")+colored(element.getAttribute('name'),class_color)+ "<br/>"+colored("       inv : ",inv_color,"font-weight: bold;") +a.getAttribute('name') + " >= 0" + " and " + a.getAttribute('name') + " <= 2147483647 <br/>"+ colored("       inv : ",inv_color,"font-weight: bold;")+ a.getAttribute('name') + ".oclIsTypeOf("+colored(type,type_color)+") <br/>")
 
                         elif i.getAttribute('href')==boolean:
                             type = "boolean"
-                            resultat.append(span("Context  : ")+colored(element.getAttribute('name'),"#a05050")+ span("       inv : ") + a.getAttribute('name') + "=  "+colored("\"True\"","#164412") +"<br/>"+ " or" + a.getAttribute('name') + "=  "+colored("\"True\"","#164412") +"<br/>")
-                            resultat.append(span("Context  : ")+colored(element.getAttribute('name'),"#a05050")+ span("       inv : ") +a.getAttribute('name') + ".oclIsTypeOf("+colored(type,"#0080ff")+") <br/>")
+                            resultat.append("<br/>"+colored("Context  : ",context_color,"font-weight: bold;")+colored(element.getAttribute('name'),class_color)+ "<br/>"+colored("       inv : ",inv_color,"font-weight: bold;") + a.getAttribute('name') + "=  "+colored("\"True\"",val_color) +"<br/>"+ " or" + a.getAttribute('name') + "=  "+colored("\"True\"",val_color) +"<br/>")
+                            resultat.append("<br/>"+colored("Context  : ",context_color,"font-weight: bold;")+colored(element.getAttribute('name'),class_color)+ "<br/>"+colored("       inv : ",inv_color,"font-weight: bold;") +a.getAttribute('name') + ".oclIsTypeOf("+colored(type,type_color)+") <br/>")
 
                         elif i.getAttribute("href")== string:
                             type= "String"
-                            resultat.append(span("Context  : ")+colored(element.getAttribute('name'),"#a05050")+ span("       inv : ") +a.getAttribute('name') + ".oclIsTypeOf("+ colored(type,"#0080ff") +")<br/>")
+                            resultat.append("<br/>"+colored("Context  : ",context_color,"font-weight: bold;")+colored(element.getAttribute('name'),class_color)+ "<br/>"+colored("       inv : ",inv_color,"font-weight: bold;") +a.getAttribute('name') + ".oclIsTypeOf("+ colored(type,type_color) +")<br/>")
     return resultat
 
 def readDatFile(file):
@@ -116,33 +124,33 @@ def Generator(path,text,dictionnaire):
                 elif type.getAttribute('href') == boolean:
                     type = "boolean"
                     if  getEqual(text,dictionnaire) == '=': #si dans la phrase il existe une égalité
-                        result.append(""+span("Context     ")+colored(element.getAttribute('name'),"#a05050")+ span("       inv : ") +a.getAttribute('name')+ ' = '+colored("\"True\"","#164412") +"<br/>")
+                        result.append("<br/>"+colored("Context     ",context_color,"font-weight: bold;")+colored(element.getAttribute('name'),class_color)+ "<br/>"+colored("       inv : ",inv_color,"font-weight: bold;") +a.getAttribute('name')+ ' = '+colored("\"True\"",val_color) +"<br/>")
                     else : # si dans la phrase il existe une innégalité
-                            result.append(""+span("Context     ")+colored(element.getAttribute('name'),"#a05050")+ span("       inv : ") +a.getAttribute('name') + ' = '+colored("\"False\"","#164412") +"<br/>")
-                    result.append(span("Context     ")+colored(element.getAttribute('name'),"#a05050")+ span("       inv : ") + a.getAttribute('name') + ".oclIsTypeOf( "+colored(type,"#0080ff")+" )<br/>")
+                            result.append("<br/>"+colored("Context     ",context_color,"font-weight: bold;")+colored(element.getAttribute('name'),class_color)+ "<br/>"+colored("       inv : ",inv_color,"font-weight: bold;") +a.getAttribute('name') + ' = '+colored("\"False\"",val_color) +"<br/>")
+                    result.append("<br/>"+colored("Context     ",context_color,"font-weight: bold;")+colored(element.getAttribute('name'),class_color)+ "<br/>"+colored("       inv : ",inv_color,"font-weight: bold;") + a.getAttribute('name') + ".oclIsTypeOf( "+colored(type,type_color)+" )<br/>")
                 for word in getTagInfo(text):
 
                     if 'NUM' in word["post"]:
                         if getEqual(word["word"],dictionnaire):
-                            result.append(span("Context     ")+colored(element.getAttribute('name'),"#a05050")+ span("       inv : ") +a.getAttribute('name')+" "+getEqual(text,dictionnaire)+ "<br/>")
+                            result.append("<br/>"+colored("Context     ",context_color,"font-weight: bold;")+colored(element.getAttribute('name'),class_color)+ "<br/>"+colored("       inv : ",inv_color,"font-weight: bold;") +a.getAttribute('name')+" "+getEqual(text,dictionnaire)+ "<br/>")
                         else:
-                            result.append(span("Context     ")+colored(element.getAttribute('name'),"#a05050")+ span("       inv : ") +a.getAttribute('name')+" "+getEqual(text,dictionnaire)+word["word"]+ "<br/>")
-                        result.append(span("Context     ")+colored(element.getAttribute('name'),"#a05050")+ span("       inv : ") +a.getAttribute('name') + ".oclIsTypeOf ("+colored(type,"#0080ff")+")<br/>")
+                            result.append("<br/>"+colored("Context     ",context_color,"font-weight: bold;")+colored(element.getAttribute('name'),class_color) + "<br/>"+colored("       inv : ",inv_color,"font-weight: bold;") +a.getAttribute('name')+" "+getEqual(text,dictionnaire)+word["word"]+ "<br/>")
+                        result.append("<br/>"+colored("Context     ",context_color,"font-weight: bold;")+colored(element.getAttribute('name'),class_color)+ "<br/>"+colored("       inv : ",inv_color,"font-weight: bold;") +a.getAttribute('name') + ".oclIsTypeOf ("+colored(type,type_color)+")<br/>")
                         continue
                     elif word["post"]=='NAM':
-                        result.append(span("Context     ")+colored(element.getAttribute('name'),"#a05050")+ span("       inv : ") +a.getAttribute('name')+" "+getEqual(text,dictionnaire)+'"'+ str(word["word"]).capitalize()+ '"' +"<br/>")
-                        result.append(span("Context     ")+colored(element.getAttribute('name'),"#a05050")+ span("       inv : ") +a.getAttribute('name') +".oclIsTypeOf ("+colored(type,"#0080ff")+") <br/>")
+                        result.append("<br/>"+colored("Context     ",context_color,"font-weight: bold;")+colored(element.getAttribute('name'),class_color)+ "<br/>"+colored("       inv : ",inv_color,"font-weight: bold;") +a.getAttribute('name')+" "+getEqual(text,dictionnaire)+'"'+ str(word["word"]).capitalize()+ '"' +"<br/>")
+                        result.append("<br/>"+colored("Context     ",context_color,"font-weight: bold;")+colored(element.getAttribute('name'),class_color)+ "<br/>"+colored("       inv : ",inv_color,"font-weight: bold;") +a.getAttribute('name') +".oclIsTypeOf ("+colored(type,type_color)+") <br/>")
                         continue
                     elif word["lemma"] == 'nul':
-                        result.append(span("Context     ")+colored(element.getAttribute('name'),"#a05050")+ span("       inv : ") +a.getAttribute('name')+""+getEqual(text,dictionnaire)+"<br/>")
-                        result.append(span("Context     ")+colored(element.getAttribute('name'),"#a05050")+ span("       inv : ") +a.getAttribute('name') + ".oclIsTypeOf ("+colored(colored(type,"#0080ff"),"#0080ff")+")<br/>")
+                        result.append("<br/>"+colored("Context     ",context_color,"font-weight: bold;")+colored(element.getAttribute('name'),class_color)+ "<br/>"+colored("       inv : ",inv_color,"font-weight: bold;") +a.getAttribute('name')+""+getEqual(text,dictionnaire)+"<br/>")
+                        result.append("<br/>"+colored("Context     ",context_color,"font-weight: bold;")+colored(element.getAttribute('name'),class_color)+ "<br/>"+colored("       inv : ",inv_color,"font-weight: bold;") +a.getAttribute('name') + ".oclIsTypeOf ("+colored(colored(type,type_color),type_color)+")<br/>")
                         continue
 
             if "majeur" in getTagLemma(text):
-                result.append(span("Context     ")+colored(element.getAttribute('name'),"#a05050")+ span("       inv : ") +" âge >= 18<br/>")
+                result.append("<br/>"+colored("Context     ",context_color,"font-weight: bold;")+colored(element.getAttribute('name'),class_color)+ "<br/>"+colored("       inv : ") +" âge >= 18<br/>")
                 continue
             if "mineur" in getTagLemma(text):
-                result.append(span("Context     ")+colored(element.getAttribute('name'),"#a05050")+ span("       inv : ") +" âge < 18<br/>")
+                result.append("<br/>"+colored("Context     ",context_color,"font-weight: bold;")+colored(element.getAttribute('name'),class_color)+ "<br/>"+colored("       inv : ") +" âge < 18<br/>")
                 continue
         if len(result) == 0:
             return "Veuillez reformuler votre phrase !"
@@ -154,7 +162,7 @@ def getContext(path, excep=[]):
         for element in xmldoc.getElementsByTagName("UML:Class"):
                 if element.getAttribute('name') == '' or element.getAttribute('name') in excep:
                     continue
-                result.append(span("Context     ")+colored(element.getAttribute('name'),"#a05050")+ span("       inv : ") +" <br/>" )
+                result.append("<br/>"+colored("Context     ",context_color,"font-weight: bold;")+colored(element.getAttribute('name'),class_color)+ "<br/>"+colored("       inv : ",inv_color,"font-weight: bold;") +" <br/>" )
         return result
 
 class GenApp(QMainWindow , Ui_MainWindow):
