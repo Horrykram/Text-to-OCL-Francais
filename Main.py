@@ -55,7 +55,7 @@ def getEqual(text,dictionnaire):
         for word in text.split(" "):
             if word in dictionnaire[key]:
                 result += key
-    return result
+    return result.replace("<","&lt;")
 
 def getContrainte(path):
     xmldoc = minidom.parse(path)
